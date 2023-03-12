@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { Statistics } from 'components/Statistics/Statistics';
 import { FeedbackOptions } from 'components/FeedbackOptions/FeedbackOptions';
 import { Notification } from 'components/Notification/Notification';
@@ -10,90 +9,80 @@ import {
   SiCoffeescript,
 } from 'components/App/App.styled';
 
-// import { SiCoffeescript } from 'react-icons/si';
+import { useState } from 'react';
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+export const App = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-  handleClick = e => {
+  const arrayButtonName = ['good', 'neutral', 'bad'];
+
+  const handleClick = e => {
     switch (e.target.textContent) {
       case 'good':
-        this.setState(({ good }) => ({
-          good: good + 1,
-        }));
+        setGood(prevGood => prevGood + 1);
         break;
 
       case 'neutral':
-        this.setState(({ neutral }) => ({
-          neutral: neutral + 1,
-        }));
+        setNeutral(prevNeutral => prevNeutral + 1);
         break;
 
       case 'bad':
-        this.setState(({ bad }) => ({
-          bad: bad + 1,
-        }));
+        setBad(prevBad => prevBad + 1);
         break;
       default:
         break;
     }
   };
 
-  countTotalFeedback = () => {
-    return Object.values(this.state).reduce((acc, value) => acc + value, 0);
+  const countTotalFeedback = () => {
+    return good + neutral + bad;
   };
 
-  countPositiveFeedbackPercentage = totalFeedback => {
+  const countPositiveFeedbackPercentage = totalFeedback => {
     if (totalFeedback > 0) {
-      return Math.round((this.state.good / totalFeedback) * 100);
+      return Math.round((good / totalFeedback) * 100);
     } else {
       return 0;
     }
   };
 
-  render() {
-    const { good, neutral, bad } = this.state;
+  return (
+    <ContainerApp>
+      <img
+        src="https://phonoteka.org/uploads/posts/2022-01/thumbs/1642968425_1-phonoteka-org-p-kartinki-dlya-fotoshopa-fon-1.jpg"
+        alt="pics"
+        width="100%"
+      />
+      <Container>
+        <Title>
+          <SiCoffeescript />
+          Cafe Espresso
+        </Title>
+        <Section title={'Please leave feedback'}>
+          <FeedbackOptions
+            options={arrayButtonName}
+            onLeaveFeedback={handleClick}
+          />
+        </Section>
 
-    return (
-      <ContainerApp>
-        <img
-          src="https://phonoteka.org/uploads/posts/2022-01/thumbs/1642968425_1-phonoteka-org-p-kartinki-dlya-fotoshopa-fon-1.jpg"
-          alt="pics"
-          width="100%"
-        />
-        <Container>
-          <Title>
-            <SiCoffeescript />
-            Cafe Espresso
-          </Title>
-          <Section title={'Please leave feedback'}>
-            <FeedbackOptions
-              options={Object.keys(this.state)}
-              onLeaveFeedback={this.handleClick}
+        <Section title={'Statistics'}>
+          {countTotalFeedback ? (
+            <Statistics
+              good={good}
+              neutral={neutral}
+              bad={bad}
+              totalFeedback={countTotalFeedback()}
+              FeedbackPercentage={countPositiveFeedbackPercentage(
+                countTotalFeedback()
+              )}
             />
-          </Section>
-
-          <Section title={'Statistics'}>
-            {this.countTotalFeedback() ? (
-              <Statistics
-                good={good}
-                neutral={neutral}
-                bad={bad}
-                totalFeedback={this.countTotalFeedback()}
-                FeedbackPercentage={this.countPositiveFeedbackPercentage(
-                  this.countTotalFeedback()
-                )}
-              />
-            ) : (
-              <Notification massage={'There is no feedback'} />
-            )}
-          </Section>
-        </Container>
-      </ContainerApp>
-    );
-  }
-}
+          ) : (
+            <Notification massage={'There is no feedback'} />
+          )}
+        </Section>
+      </Container>
+    </ContainerApp>
+  );
+};

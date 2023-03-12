@@ -8,8 +8,6 @@ export function Statistics({
   totalFeedback,
   FeedbackPercentage,
 }) {
-  console.log(`📌  totalFeedback:`, totalFeedback);
-
   return (
     <div>
       <List>
